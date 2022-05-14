@@ -47,7 +47,7 @@ The command has built the source code into a container using Cloud Build then de
 
 The command:
 
-* sets the `REPLICA_URL` environment variable to point at the Cloud Storage URL
+* sets the `REPLICA_URL` environment variable to point at the Cloud Storage URL (note that Livestream expects `gcs://` instead of `gs://`, this will change in the next Litestream release) 
 * forces a maximum of one instance because Litestream isn't compatible with multiple servers
 * uses the Cloud Run second generation execution environment for better performance
 * asks for the CPU to always be allocated (evenoutside of requests processing)
