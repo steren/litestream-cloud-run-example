@@ -17,7 +17,7 @@ a single container.
 * [Create a Cloud Storage bucket](https://cloud.google.com/storage/docs/creating-buckets) in a single region, for example `us-central1`, and write down the bucket name.
 
 
-### Building & deploy the sample to Cloud Run
+### Build & deploy the sample to Cloud Run
 
 Clone this repository and navigate to the directory.
 
