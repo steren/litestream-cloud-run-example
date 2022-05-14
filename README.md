@@ -1,7 +1,7 @@
 Litestream & Cloud Run example
 ===========================
 
-**Important:** Litestream currently **does not work well** on automatically scaled platforms like Cloud Run because it assums a maximum of one instance.
+**Important:** Litestream currently **does not work well** on automatically scaled platforms like Cloud Run because it expects a maximum of one instance.
 
 This repository provides an example of running a Go application in the same
 container as Litestream by using the built-in subprocess execution. This allows
