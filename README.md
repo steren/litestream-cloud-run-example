@@ -24,13 +24,13 @@ Clone this repository and navigate to the directory.
 You build and deploy the application with the following command:
 
 ```sh
-gcloud run deploy litestream-example \
+gcloud beta run deploy litestream-example \
   --source .  \
   --set-env-vars REPLICA_URL=gcs://BUCKET_NAME/database \
   --max-instances 1 \
   --execution-environment gen2 \
   --no-cpu-throttling \
-  --allow-unauthenticated \ 
+  --allow-unauthenticated \
   --region REGION \
   --project PROJECT_ID
 ```
