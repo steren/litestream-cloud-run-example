@@ -7,10 +7,7 @@ COPY . /src/myapp
 WORKDIR /src/myapp
 
 # Build our application as a static build.
-# The mount options add the build cache to Docker to speed up multiple builds.
-RUN --mount=type=cache,target=/root/.cache/go-build \
-	--mount=type=cache,target=/go/pkg \
-	go build -ldflags '-s -w -extldflags "-static"' -tags osusergo,netgo,sqlite_omit_load_extension -o /usr/local/bin/myapp .
+RUN go build -ldflags '-s -w -extldflags "-static"' -tags osusergo,netgo,sqlite_omit_load_extension -o /usr/local/bin/myapp .
 
 # Download the static build of Litestream directly into the path & make it executable.
 # This is done in the builder and copied as the chmod doubles the size.

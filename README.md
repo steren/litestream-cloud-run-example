@@ -11,92 +11,40 @@ a single container.
 
 ### Prerequisites
 
-To test this locally, you'll need to have an S3-compatible store to connect to.
-Please see the [Litestream Guides](https://litestream.io/guides/) to get set up
-on your preferred object store.
-
-You'll also need to update the replica URL in `etc/litestream.yml` in this
-repository to your appropriate object store.
-
-You'll also need to set your object store credentials in your shell environment:
-
-```sh
-export LITESTREAM_ACCESS_KEY_ID=XXX
-export LITESTREAM_SECRET_ACCESS_KEY=XXX
-```
+* Create a Google Cloud project, write down its project ID
+* [Create a Cloud Storage bucket](https://cloud.google.com/storage/docs/creating-buckets), use a single region, for example `us-central1`, and write down the bucket name
 
 
-### Building & running the container
+### Building & deploy the sample to Cloud Run
+
+Clone this repository and na
 
 You can build the application with the following command:
 
 ```sh
-docker build -t myapp .
+gcloud run deploy litestream-example \
+  --source .  \
+  --set-env-vars REPLICA_URL=gcs://BUCKET_NAME/database \
+  --execution-environment gen2 \
+  --region REGION \
+  --no-cpu-throttling \
+  --allow-unauthenticated \ 
+  --project PROJECT_ID
 ```
 
-Once the image is built, you can run it with the following command. _Be sure to
-change the `REPLICA_URL` variable to point to your bucket_.
+Replace:
 
-```sh
-docker run \
-  -p 8080:8080 \
-  -v ${PWD}:/data \
-  -e REPLICA_URL=s3://YOURBUCKETNAME/db \
-  -e LITESTREAM_ACCESS_KEY_ID \
-  -e LITESTREAM_SECRET_ACCESS_KEY \
-  myapp
-```
+* `BUCKET_NAME` with your Cloud Storage bucket name
+* `REGION` with the same region where you created the bucket, for example `us-central1`
+* `PROJECT_ID` with your Google Cloud project ID.
 
-Let's break down the options one-by-one:
+When the deployment completes, open the `.run.app` URL of the Cloud Run service.
 
-- `-p 8080:8080`—maps the container's port 8080 to the host machine's port 8080
-  so you can access the application's web server.
+The command has built the current source code into a container using Cloud Build then deployed it to Cloud Run.
+We have set the `REPLICA_URL` environment variable to point at the Cloud Storage URL, we are using the second generation execution environment, we asked to have CPU always allocated  and we have made the service publicly accessible by allowing unauthenticated invocations.
 
-- `-v ${PWD}:/data`—mounts a volume from your current directory on the host
-  to the `/data` directory inside the container.
+### Additional security
 
-- `-e REPLICA_URL=...`—sets an environment variable for your replica. This is
-  used by the startup script to restore the database from a replica if it
-  doesn't exist and it is used in the Litestream configuration file.
-
-- `-e LITESTREAM_ACCESS_KEY_ID` & `-e LITESTREAM_SECRET_ACCESS_KEY`—passes
-  through your current environment variables for your S3 credentials to the
-  container. You can also use `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
-  instead.
-
-
-### Testing it out
-
-In another window, you can run:
-
-```sh
-curl localhost:8080
-```
-
-and you should see:
-
-```
-This server has been visited 1 times.
-```
-
-Each time you run cURL, it will increment that value by one.
-
-
-### Recovering your database
-
-You can simulate a catastrophic disaster by stopping your container and then
-deleting your database:
-
-```
-rm -rf db db-shm db-wal .db-litestream
-```
-
-When you restart the container again, it should print:
-
-```
-No database found, restoring from replica if exists
-```
-
-and then begin restoring from your replica. The visit counter on your app should
-continue where it left off.
-
+Containers deployed to Cloud Run run with an identity, by default, it is the "Default Compute Service Account", which has read/write access to Cloud Storage buckets in the same project.
+For additional security, it is recommended to create a dedicated Servie Account with read/write permission on the Cloud Storage bucket and then use this service account as the identity of the Cloud Run service. 
+Read more [here](https://cloud.google.com/run/docs/securing/service-identity)
