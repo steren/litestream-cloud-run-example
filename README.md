@@ -19,9 +19,9 @@ a single container.
 
 ### Build & deploy the sample to Cloud Run
 
-Clone this repository and navigate to the directory.
+Clone this repository and navigate to the cloned location.
 
-You build and deploy the application with the following command:
+Then build and deploy the application with the following command:
 
 ```sh
 gcloud beta run deploy litestream-example \
