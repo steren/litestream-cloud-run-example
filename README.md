@@ -1,5 +1,7 @@
-Litestream & Docker Example
+Litestream & Cloud Run example
 ===========================
+
+**Important:** Litestream currently **does not work well** on automatically scaled platforms like Cloud Run because it assums a maximum of one instance.
 
 This repository provides an example of running a Go application in the same
 container as Litestream by using the built-in subprocess execution. This allows
@@ -11,24 +13,25 @@ a single container.
 
 ### Prerequisites
 
-* Create a Google Cloud project, write down its project ID
-* [Create a Cloud Storage bucket](https://cloud.google.com/storage/docs/creating-buckets), use a single region, for example `us-central1`, and write down the bucket name
+* Create a Google Cloud project, write down its project ID.
+* [Create a Cloud Storage bucket](https://cloud.google.com/storage/docs/creating-buckets) in a single region, for example `us-central1`, and write down the bucket name.
 
 
 ### Building & deploy the sample to Cloud Run
 
-Clone this repository and na
+Clone this repository and navigate to the directory.
 
-You can build the application with the following command:
+You build and deploy the application with the following command:
 
 ```sh
 gcloud run deploy litestream-example \
   --source .  \
   --set-env-vars REPLICA_URL=gcs://BUCKET_NAME/database \
+  --max-instances 1 \
   --execution-environment gen2 \
-  --region REGION \
   --no-cpu-throttling \
   --allow-unauthenticated \ 
+  --region REGION \
   --project PROJECT_ID
 ```
 
@@ -40,8 +43,15 @@ Replace:
 
 When the deployment completes, open the `.run.app` URL of the Cloud Run service.
 
-The command has built the current source code into a container using Cloud Build then deployed it to Cloud Run.
-We have set the `REPLICA_URL` environment variable to point at the Cloud Storage URL, we are using the second generation execution environment, we asked to have CPU always allocated  and we have made the service publicly accessible by allowing unauthenticated invocations.
+The command has built the source code into a container using Cloud Build then deployed it to Cloud Run.
+
+The command:
+
+* sets the `REPLICA_URL` environment variable to point at the Cloud Storage URL
+* forces a maximum of one instance because Litestream isn't compatible with multiple servers
+* uses the Cloud Run second generation execution environment for better performance
+* asks for the CPU to always be allocated (evenoutside of requests processing)
+* makes the service publicly accessible by allowing unauthenticated invocations
 
 ### Additional security
 
