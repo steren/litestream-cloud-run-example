@@ -55,6 +55,6 @@ The command:
 
 ### Additional security
 
-Containers deployed to Cloud Run run with an identity, by default, it is the "Default Compute Service Account", which has read/write access to Cloud Storage buckets in the same project.
+Containers deployed to Cloud Run run with an identity, by default, it is the "Default Compute Service Account", which has read/write access to all Cloud Storage buckets in the same project as well as a lot of other permissions on resources in the same project.
 For additional security, it is recommended to create a dedicated Servie Account with read/write permission on the Cloud Storage bucket and then use this service account as the identity of the Cloud Run service. 
 Read more [here](https://cloud.google.com/run/docs/securing/service-identity)
