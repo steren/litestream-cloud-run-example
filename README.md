@@ -1,8 +1,6 @@
 Litestream & Cloud Run example
 ===========================
 
-**Important:** Litestream currently **does not work well** on automatically scaled platforms like Cloud Run because it expects a maximum of one instance.
-
 This repository provides an example of running a Go application in the same
 container as Litestream by using the built-in subprocess execution. This allows
 developers to release their SQLite-based application and provide replication in
@@ -42,6 +40,8 @@ Replace:
 * `PROJECT_ID` with your Google Cloud project ID.
 
 When the deployment completes, open the `.run.app` URL of the Cloud Run service.
+
+**Important:** Litestream currently does not work well on automatically scaled platforms like Cloud Run because it **expects a maximum of one instance**. Make sure to use `--max-instances 1` or `--scale 1`.
 
 The command has built the source code into a container using Cloud Build then deployed it to Cloud Run.
 
